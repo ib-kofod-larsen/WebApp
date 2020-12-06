@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ikl.web.Client.Shared;
-using BlazorStrap;
 
 namespace ikl.web.Client
 {
@@ -22,7 +21,6 @@ namespace ikl.web.Client
             builder.Services.AddSingleton(sp => new HttpClient
                 {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
             builder.Services.AddSingleton<DataService>();
-            builder.Services.AddBootstrapCss();
             var host = builder.Build();
 
             await host.RunAsync();
