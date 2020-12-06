@@ -1,4 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using ikl.web.Shared;
+@inject DataService DataService
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">ikl.web</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -12,16 +14,15 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="customers">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Kunder
-            </NavLink>
-        </li>
+        @foreach (var item in _customers)
+        {
+            var link = "drawings/" + item.Id;
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="@link">
+                   @string.Join(",", item.Names)
+                </NavLink>
+            </li>
+        }
     </ul>
 </div>
 
@@ -29,6 +30,19 @@
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private Customer[] _customers = new Customer[0];
+    private Data _data;
+    protected override async Task OnParametersSetAsync()
+    {
+
+        _data = await DataService.GetData();
+        _customers = _data.Customers;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        //_data = await DataService.GetData();
+        await base.OnInitializedAsync();
+    }
 
     private void ToggleNavMenu()
     {

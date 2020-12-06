@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ikl.web.Server", "Server\ikl.web.Server.csproj", "{5694C607-4BF2-4252-844D-BB06665F1F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ikl.web.Server", "Server\ikl.web.Server.csproj", "{5694C607-4BF2-4252-844D-BB06665F1F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ikl.web.Client", "Client\ikl.web.Client.csproj", "{3194C87C-4BCD-430B-A2AF-8F4437770635}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ikl.web.Client", "Client\ikl.web.Client.csproj", "{3194C87C-4BCD-430B-A2AF-8F4437770635}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ikl.web.Shared", "Shared\ikl.web.Shared.csproj", "{F74CFBAA-A73E-41D6-BD47-44341894D37B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ikl.web.Shared", "Shared\ikl.web.Shared.csproj", "{F74CFBAA-A73E-41D6-BD47-44341894D37B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

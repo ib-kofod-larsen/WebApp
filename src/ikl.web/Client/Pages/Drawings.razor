@@ -1,0 +1,70 @@
+@page "/drawings/{CustomerId}"
+@using ikl.web.Shared
+@using BlazorStrap;
+@inject DataService DataService
+
+<BSCard CardType="CardType.Columns">
+    @foreach (var item in _drawings)
+    {
+        <BSCard>
+            <BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@("https://ibkofodlarsen.blob.core.windows.net/thumbnails/" + item.Path)" alt="@(Customer.Names[0] + " - " + item.Title)" />
+            <BSCard CardType="CardType.Body">
+                <BSCard CardType="CardType.Title">@item.Title</BSCard>
+                <BSCard CardType="CardType.Subtitle">Ratios: @string.Join(",", item.Ratios)</BSCard>
+                <BSCard CardType="CardType.Text">Tags: @string.Join(",", item.Tags)</BSCard>
+            </BSCard>
+        </BSCard>
+    }
+</BSCard>
+
+    @code{
+
+        private string _customerId;
+        [Parameter]
+        public string CustomerId
+        {
+            get => _customerId; 
+            set
+            {
+                _customerId = value;
+                Update();
+            }
+        }
+
+        [Parameter]
+        public Customer Customer { get; set; }
+        private IList<Drawing> _drawings = new List<Drawing>();
+        private Data _data;
+        public Data Data
+        {
+            get => _data;
+            set
+            {
+                _data = value;
+                Update();
+            }
+        }
+
+
+
+        protected override async Task OnInitializedAsync()
+        {
+            Data = await DataService.GetData();
+            await base.OnInitializedAsync();
+        }
+
+        private void Update()
+        {
+            List<Drawing> drawings;
+            if (Data == null)
+            {
+                drawings = new List<Drawing>();
+            }
+            else
+            {
+                Customer = Data.Customers.First(c => c.Id == CustomerId);
+                drawings = Data.Drawings.Where(d => d.CustomerId == Customer.Id).ToList();
+            }
+            _drawings = drawings;
+        }
+    }

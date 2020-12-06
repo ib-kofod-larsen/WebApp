@@ -26,17 +26,19 @@ namespace ikl.web.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllersWithViews();
             services.AddRazorPages();
+            var drawingsJson = File.ReadAllText("drawings.json");
+            var drawings = JsonSerializer.Deserialize<Drawing[]>(drawingsJson);
+
             var customersJson = File.ReadAllText("customers.json");
-            var customers = JsonSerializer.Deserialize<ICollection<Customer>>(customersJson);
+            var customers = JsonSerializer.Deserialize<Customer[]>(customersJson);
             foreach (var item in customers)
             {
                 item.Year += 1900;
             }
-            services.AddSingleton(sp => customers);
-            var drawingsJson = File.ReadAllText("drawings.json");
-            services.AddSingleton(sp => JsonSerializer.Deserialize<ICollection<Drawing>>(drawingsJson));
+            services.AddSingleton(sp => new Data(drawings, customers));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
