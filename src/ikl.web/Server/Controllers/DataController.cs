@@ -13,7 +13,7 @@ namespace ikl.web.Server.Controllers
         {
             _data = data;
         }
-
+        
         [HttpGet]
         public Data Get()
         {

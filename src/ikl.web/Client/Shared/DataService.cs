@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using ikl.web.Shared;
@@ -8,6 +10,7 @@ namespace ikl.web.Client.Shared
     public class DataService
     {
         private readonly HttpClient _httpClient;
+
         private Data _data;
         
         public DataService(HttpClient httpClient)
@@ -15,14 +18,42 @@ namespace ikl.web.Client.Shared
             _httpClient = httpClient;
         }
 
-        public async Task<Data> GetData()
+        public async Task Initialize()
         {
-            if (_data != null)
-            {
-                return _data;
-            }
-            _data = await _httpClient.GetFromJsonAsync<Data>("Data");
-            return _data;
+            _data = await _httpClient.GetFromJsonAsync<Data>("data");
+        }
+
+        public Customer[] GetCustomers()
+        {
+            return _data.Customers;
+        }
+
+        public Customer GetCustomer(string customerId)
+        {
+            return _data.Customers.First(c => c.Id == customerId);
+        }
+
+
+        public List<Drawing> GetDrawings(string customerId)
+        {
+            return _data
+                .Drawings
+                .Where(d => !(d.Ratios.Length == 1 && d.Ratios[0] == "1:1"))
+                .Where(d => d.CustomerId.Equals(customerId)).ToList();
+        }
+        
+        public List<Drawing> SearchDrawings(string text)
+        {
+            return _data
+                .Drawings
+                .Where(d => !(d.Ratios.Length == 1 && d.Ratios[0] == "1:1"))
+                .Where(d =>
+                    d.Description.Contains(text) ||
+                    d.Title.Contains(text) ||
+                    d.Tags.Contains(text) ||
+                    d.Path.Contains(text) ||
+                    d.Ratios.Any(r => r.Contains(text)))
+                .ToList();
         }
     }
 }

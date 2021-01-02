@@ -24,5 +24,22 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>
+<script>
+    function showModal(drawingId, caption) {
+        const modal = document.getElementById("modal-" + drawingId);
 
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        const img = document.getElementById("img-" + drawingId);
+        const modalImg = document.getElementById("img-modal-" + drawingId);
+        const captionText = document.getElementById("caption-" + drawingId);
+        modal.style.display = "block";
+        modalImg.src = "https://ibkofodlarsen.blob.core.windows.net/thumbnalis-large/" + drawingId + ".jpg";
+        captionText.innerHTML = caption;
+    }
+    
+    function closeModal(drawingId) {
+        const modal = document.getElementById("modal-" + drawingId);
+        modal.style.display = "none";
+    }
+</script>
 </html>

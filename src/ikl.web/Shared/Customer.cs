@@ -12,6 +12,5 @@ namespace ikl.web.Shared
         public int Year { get; set; }
         [JsonPropertyName("names")]
         public string[] Names { get; set; }
-        
     }
 }

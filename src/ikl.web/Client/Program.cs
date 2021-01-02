@@ -23,6 +23,8 @@ namespace ikl.web.Client
             builder.Services.AddSingleton<DataService>();
             var host = builder.Build();
 
+            var dataService = host.Services.GetService<DataService>();
+            await dataService.Initialize();
             await host.RunAsync();
         }
     }

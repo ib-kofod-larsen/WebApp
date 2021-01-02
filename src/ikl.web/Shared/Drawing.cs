@@ -20,5 +20,7 @@ namespace ikl.web.Shared
         public List<string> Tags { get; set; }
         [JsonPropertyName("path")]
         public string Path { get; set; }
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
     }
 }
