@@ -1,0 +1,12 @@
+﻿
+@inject DataService DataService
+
+  @foreach (var customer in DataService.GetCustomers())
+  {
+      var drawings = DataService.GetDrawings(customer.Id);
+      // if no drawings, dont add nav item
+      if (!drawings.Any()) continue;
+      var link = "drawings?customerId=" + customer.Id;
+        
+      <MatNavItem Href="@link" Class="hoverList">@customer.Names[0]</MatNavItem>
+  }

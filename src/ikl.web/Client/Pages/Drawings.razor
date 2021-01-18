@@ -2,150 +2,33 @@
 @using ikl.web.Shared
 @inject DataService DataService
 @inject NavigationManager NavManager
-@inject IJSRuntime JsRuntime
 
 @if (Customer != null)
 {
-    <h2>@Customer.Names[0]</h2>
+    <MatH2>@Customer.Names[0]</MatH2>
 }
-else
-{
-    <h2>Drawings:</h2>
-}
-
-<div class="card-columns">
-    @foreach (var item in _drawings)
+<div class="cards">
+    @foreach (var drawing in _drawings)
     {
-        var customer = DataService.GetCustomer(item.CustomerId);
-        var drawingId = item.Path.Substring(0, item.Path.Length - 4);
-        <div class="card">
-            <!-- set a width on the image otherwise it will expand to full width       -->
-            <img class="card-img-top img-fluid click-able-image hover-image" id="img-@drawingId" @onclick="() => ShowOverlay(drawingId, item.Title)"
-                 src="@("https://ibkofodlarsen.blob.core.windows.net/thumbnails/" + item.Path)" alt="@item.Title">
-            <div id="modal-@drawingId" class="modal">
-              <span id="close-@drawingId" class="close" @onclick="() => CloseOverlay(drawingId)">&times;</span>
-              <img class="modal-content" id="img-modal-@drawingId">
-              <div id="caption-@drawingId" class="caption"></div>
-            </div>
-            <div class="card-body">
-                <h4 class="card-title">@item.Title</h4>
-                <p class="card-text">Id      : @drawingId</p>
-                <p class="card-text">Customer: @string.Join(",", customer.Names)</p>
-                <p class="card-text">Ratios  : @string.Join(",", item.Ratios)</p>
-                <p class="card-text">Description: @item.Description</p>
-            </div>
-            @if (item.Tags.Any())
-            {
-                <div class="card-footer">
-                    Tags: @string.Join(",", item.Tags)
-                </div>
-            }
-        </div>
+        <DrawingCard Drawing="drawing"/>
     }
 </div>
+
 <style>
-/* Style the Image Used to Trigger the Modal */
-.click-able-image {
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;  
+.cards {
+ 
+display: grid;
+ 
+grid-template-columns: repeat(3, 1fr);
+ 
+grid-auto-rows: auto;
+ 
+grid-gap: 1rem;
+ 
 }
 
-.hover-image:hover {opacity: 0.7;}
 
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
-}
 
-/* Modal Content (Image) */
-.modal-content {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-}
-
-/* Caption of Modal Image (Image Text) - Same Width as the Image */
-.caption {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-  text-align: center;
-  color: #ccc;
-  padding: 10px 0;
-  height: 150px;
-}
-
-/* Add Animation - Zoom in the Modal */
-.modal-content, .caption {
-  animation-name: zoom;
-  animation-duration: 0.6s;
-}
-
-@@keyframes zoom {
-  from {transform:scale(0)}
-  to {transform:scale(1)}
-}
-
-/* The Close Button */
-.close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.close:hover,
-.close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* 100% Image Width on Smaller Screens */
-@@media only screen and (max-width: 700px){
-  .modal-content {
-    width: 100%;
-  }
-}
-@@media (min-width: 576px) {
-.card-columns {
-    column-count: 2;
-}
-}
-
-@@media (min-width: 768px) {
-    .card-columns {
-        column-count: 3;
-    }
-}
-
-@@media (min-width: 992px) {
-    .card-columns {
-        column-count: 4;
-    }
-}
-
-@@media (min-width: 1200px) {
-    .card-columns {
-        column-count: 5;
-    }
-}
 </style>
 
     @code{
@@ -161,15 +44,7 @@ else
             Update(uri.Query);
         }
 
-        private void ShowOverlay(string drawingId, string caption)
-        {
-            ((IJSInProcessRuntime) JsRuntime).Invoke<string>("showModal", drawingId, caption);
-        }
-
-        private void CloseOverlay(string drawingId)
-        {
-            ((IJSInProcessRuntime) JsRuntime).Invoke<string>("closeModal", drawingId);
-        }
+        
         private void NavManagerOnLocationChanged(object sender, LocationChangedEventArgs e)
         {
             Update(e.Location);

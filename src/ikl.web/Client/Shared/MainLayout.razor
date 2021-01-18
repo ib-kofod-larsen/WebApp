@@ -1,18 +1,77 @@
-﻿@inherits LayoutComponentBase
-    <div class="page">
-        <div class="sidebar">
-            <NavMenu />
-        </div>
+﻿@using ikl.web.Shared
+@inherits LayoutComponentBase
 
-
-        <div class="main">
-            <div class="top-row px-4">
-                <a href="about" class="ml-md-auto">About</a>
-            </div>
-
-            <div class="content px-4">
+<style>
+    .mdc-top-app-bar {
+        background-color: #d0d0d0 !important;
+    }
+    header a:hover {
+        text-decoration: none;
+    }
+   @@media screen and (min-width: 600px){
+         .mdc-drawer {
+             transition-property: none !important;
+         }
+    }
+</style>
+<MatAppBarContainer Style="display: flex; flex-direction: column; height: 100%;">
+    <MatAppBar Fixed="true">
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <a href="/" style="margin-left: 10px;"><img src="./icon-192.png" style="height: 48px" alt="" /> <img src="./ib_kofod-larsen_maa_sig_sm.png" style="height: 32px" alt="" /></a>
+            </MatAppBarSection>
+            <MatAppBarSection>
+                @* <MatIconButton Icon="search" Link="/search"></MatIconButton> *@
+                @* <MatAppBarTitle Style="width: 100%"><</MatAppBarTitle> *@
+            </MatAppBarSection>
+            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                <MatHidden Breakpoint="@MatBreakpoint.MD" Direction="@MatHiddenDirection.Up">
+                    <MatIconButton Icon="menu" OnClick="ButtonClicked"></MatIconButton>
+                </MatHidden>
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
+ 
+    <MatAppBarContent Style="flex-grow: 1; ">
+        <MatDrawerContainer DrawerWidth="300px" Style="width: 100%; flex-grow: 1; display: flex; height: 100%;">
+            <MatHidden Breakpoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Up">
+                <ChildContent>
+                    <MatDrawer @bind-Opened="@_opened" Mode="@MatDrawerMode.Modal" Style="background-color:  #f1f1f1; width: 300px">
+                        <MatNavMenu>
+                            <FilterMenu></FilterMenu>
+                        </MatNavMenu>
+                    </MatDrawer>
+                </ChildContent>
+             
+                <ElseContent>
+                    <MatDrawer @bind-Opened="@_openedDesktop" Mode="@MatDrawerMode.Dismissible" Style="background-color:  #f1f1f1; width: 300px">
+                        <MatNavMenu>
+                            <FilterMenu></FilterMenu>
+                        </MatNavMenu>
+                    </MatDrawer>
+                </ElseContent>
+            </MatHidden>
+            <MatDrawerContent Style="overflow-y: scroll;">
                 @Body
-            </div>
-        </div>
-    </div>
+            </MatDrawerContent>
+        </MatDrawerContainer>
+        
+    </MatAppBarContent>
+</MatAppBarContainer>
+<style>
+    .hoverList:hover {
+        background-color: lightgray;
+    }
+</style>
 
+@code {
+
+    bool _opened = false;
+    bool _openedDesktop = true;
+ 
+    void ButtonClicked()
+    {
+        _opened = !_opened;
+    }
+
+}
