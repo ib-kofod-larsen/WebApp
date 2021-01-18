@@ -14,6 +14,7 @@ namespace ikl.web.Client.Shared
         private Data _data;
 
         public HashSet<string> Tags = new HashSet<string>();
+        public HashSet<string> CustomerName = new HashSet<string>();
         public DataService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -22,7 +23,7 @@ namespace ikl.web.Client.Shared
         public async Task Initialize()
         {
             _data = await _httpClient.GetFromJsonAsync<Data>("data");
-            foreach (var drawing in _data.Drawings)
+            foreach (var drawing in GetDrawings())
             {
                 foreach (var tag in drawing.Tags)
                 {

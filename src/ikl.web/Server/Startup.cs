@@ -42,10 +42,6 @@ namespace ikl.web.Server
 
             foreach (var drawing in drawings)
             {
-                var customer = customers.First(c => c.Id == drawing.CustomerId);
-                drawing.Tags.Add(customer.Names[0]);
-                drawing.Tags.Add(customer.Year.ToString());
-                drawing.Tags.Add(drawing.Date.Year.ToString());
                 foreach (var ratio in drawing.Ratios)
                 {
                     drawing.Tags.Add(ratio);
@@ -60,7 +56,10 @@ namespace ikl.web.Server
                     drawing.Tags.Add("chair");
                 }
 
-                if (drawing.Title.Contains("tisch", StringComparison.InvariantCultureIgnoreCase))
+                if (drawing.Title.Contains("tisch", StringComparison.InvariantCultureIgnoreCase) ||
+                    drawing.Title.Contains("bord", StringComparison.InvariantCultureIgnoreCase) ||
+                    drawing.Title.Contains("table", StringComparison.InvariantCultureIgnoreCase)
+                    )
                 {
                     drawing.Tags.Add("bord");
                     drawing.Tags.Add("table");
