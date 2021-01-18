@@ -1,0 +1,78 @@
+﻿@page "/search"
+@using ikl.web.Shared
+
+@inject DataService DataService
+<MatAutocompleteList 
+    Items="@_customerOptions" 
+    TItem="string" Label="Customers" 
+    ValueChanged="CustomerChanged"/>
+
+<MatAutocompleteList 
+    Items="@DataService.Tags" 
+    TItem="string" Label="search options" 
+    ValueChanged="TagSearchChanged"/>
+
+<div class="cards">
+    @foreach (var drawing in _drawings)
+    {
+        <DrawingCard Drawing="drawing"/>
+    }
+</div>
+
+
+<style>
+.cards {
+ 
+display: grid;
+ 
+grid-template-columns: repeat(3, 1fr);
+ 
+grid-auto-rows: auto;
+ 
+grid-gap: 1rem;
+ 
+}
+
+
+
+</style>
+@code {
+    private string[] _customerOptions = new string[0];
+    private Drawing[] _drawings = new Drawing[0];
+    private string _tag;
+    private Customer _customer;
+    protected override void OnInitialized()
+    {
+        _customerOptions = DataService.GetCustomers().Select(c => c.Names[0]).ToArray();
+        SetDrawings();
+        base.OnInitialized();
+    }
+
+    private void CustomerChanged(string customerName)
+    {
+        _customer = DataService.GetCustomers().First(c => Equals(customerName, c.Names[0]));
+       
+    }
+
+    private void TagSearchChanged(string tag)
+    {
+        _tag = tag;
+        SetDrawings();
+    }
+
+    private void SetDrawings()
+    {
+        IEnumerable<Drawing> drawings = Enumerable.Empty<Drawing>();
+        if (_customer == null)
+        {
+            _drawings = DataService.GetDrawings().Take(10).ToArray();
+            return;
+        }
+        drawings = DataService.GetDrawings(_customer.Id);
+        if (string.IsNullOrEmpty(_tag))
+        {
+            _drawings = drawings.Where(d => d.Tags.Contains(_tag)).ToArray();
+        }
+        _drawings = drawings.ToArray();
+    }
+}

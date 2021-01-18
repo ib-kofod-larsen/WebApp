@@ -1,0 +1,156 @@
+﻿@using ikl.web.Shared
+@inject DataService DataService
+@inject IJSRuntime JsRuntime
+
+<MatCard class="mat-card">
+    <MatCardContent Style="border: 2px solid black; border-radius: 4px; padding: .5rem;">
+        <MatCardMedia
+            Wide="true"
+            @onclick="() => ShowOverlay(_drawingId, Drawing.Title)"
+            ImageUrl="@("https://ibkofodlarsen.blob.core.windows.net/thumbnails/" + Drawing.Path)"/>
+        <div id="modal-@_drawingId" class="modal" @onclick="() => CloseOverlay(_drawingId)">
+            <img class="modal-content" id="img-modal-@_drawingId" alt="image">
+            <div id="caption-@_drawingId" class="caption"></div>
+        </div>
+        <div class="mat-card-content">
+            <MatHeadline6 class="mat-card-clean-margin">
+                @Drawing.Title
+            </MatHeadline6>
+            <MatSubtitle2 class="mat-card-clean-margin">
+                @_customer.Names[0]
+            </MatSubtitle2>
+            <MatSubtitle2 class="mat-card-clean-margin">
+                @("Id       : " + _drawingId)
+            </MatSubtitle2>
+            <MatSubtitle2>
+                @("Ratios   : " + string.Join(",", Drawing.Ratios))
+            </MatSubtitle2>
+
+        </div>
+
+        @if (!string.IsNullOrEmpty(Drawing.Description))
+        {
+            <MatSubtitle2>@Drawing.Description</MatSubtitle2>
+        }
+        else
+        {
+            <MatSubtitle2>@(Drawing.Date.Year + " - " + _customer.Names[0] + " - " + Drawing.Title)</MatSubtitle2>
+        }
+    </MatCardContent>
+</MatCard>
+<style>
+.contain-image div {
+    
+    
+    
+}
+.mat-card {
+    max-width: 400px;
+}
+
+.mat-card-content {
+    padding: 1rem;
+}
+
+.mat-card-clean-margin {
+    margin: 0px;
+}
+/* Style the Image Used to Trigger the Modal */
+.click-able-image {
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;  
+}
+
+.hover-image:hover {opacity: 0.7;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+.caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content, .caption {
+  animation-name: zoom;
+  animation-duration: 0.6s;
+}
+
+@@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
+@code {
+    
+    [Parameter]
+    public Drawing Drawing { get; set; }
+
+    private Customer _customer;
+    private string _drawingId;
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetValue(nameof(Drawing), out Drawing drawing))
+        {
+            _customer = DataService.GetCustomer(drawing.CustomerId);
+            _drawingId = drawing.Path.Substring(0, drawing.Path.Length - 4);   
+        }
+        return base.SetParametersAsync(parameters);
+    }
+    private void ShowOverlay(string drawingId, string caption)
+    {
+        ((IJSInProcessRuntime) JsRuntime).Invoke<string>("showModal", drawingId, caption);
+    }
+
+    private void CloseOverlay(string drawingId)
+    {
+        ((IJSInProcessRuntime) JsRuntime).Invoke<string>("closeModal", drawingId);
+    }
+}

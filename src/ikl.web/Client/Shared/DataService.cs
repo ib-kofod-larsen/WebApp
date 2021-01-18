@@ -12,7 +12,8 @@ namespace ikl.web.Client.Shared
         private readonly HttpClient _httpClient;
 
         private Data _data;
-        
+
+        public HashSet<string> Tags = new HashSet<string>();
         public DataService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -21,6 +22,13 @@ namespace ikl.web.Client.Shared
         public async Task Initialize()
         {
             _data = await _httpClient.GetFromJsonAsync<Data>("data");
+            foreach (var drawing in _data.Drawings)
+            {
+                foreach (var tag in drawing.Tags)
+                {
+                    Tags.Add(tag);
+                }
+            }
         }
 
         public Customer[] GetCustomers()
@@ -40,6 +48,14 @@ namespace ikl.web.Client.Shared
                 .Drawings
                 .Where(d => !(d.Ratios.Length == 1 && d.Ratios[0] == "1:1"))
                 .Where(d => d.CustomerId.Equals(customerId)).ToList();
+        }
+        
+        public List<Drawing> GetDrawings()
+        {
+            return _data
+                .Drawings
+                .Where(d => !(d.Ratios.Length == 1 && d.Ratios[0] == "1:1"))
+                .ToList();
         }
         
         public List<Drawing> SearchDrawings(string text)

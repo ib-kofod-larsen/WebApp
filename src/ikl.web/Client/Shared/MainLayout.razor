@@ -1,18 +1,59 @@
-﻿@inherits LayoutComponentBase
-    <div class="page">
-        <div class="sidebar">
-            <NavMenu />
-        </div>
+﻿@using ikl.web.Shared
+@inherits LayoutComponentBase
+@inject DataService DataService
 
+<MatAppBarContainer>
+    <MatAppBar Fixed="true">
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <MatIconButton Icon="menu" OnClick="ButtonClicked" ></MatIconButton>
+            </MatAppBarSection>
+            <MatAppBarSection>
+                <MatIconButton Icon="home" Link="/"></MatIconButton>
+                <MatIconButton Icon="search" Link="/search"></MatIconButton>
+                <MatAppBarTitle>IB KOFOD LARSEN</MatAppBarTitle>
+            </MatAppBarSection>
+            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                <MatIconButton Icon="info"></MatIconButton>
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
+ 
+    <MatAppBarContent>
+        <MatDrawerContainer Style="width: 100vw; height: 100vh;">
+            <MatDrawer @bind-Opened="@_opened">
+                <MatNavMenu>
+                    @foreach (var customer in DataService.GetCustomers())
+                    {
+                        var drawings = DataService.GetDrawings(customer.Id);
+                        // if no drawings, dont add nav item
+                        if (!drawings.Any()) continue;
+                        var link = "drawings?customerId=" + customer.Id;
 
-        <div class="main">
-            <div class="top-row px-4">
-                <a href="about" class="ml-md-auto">About</a>
-            </div>
-
-            <div class="content px-4">
+                        <MatNavItem Href="@link" Class="hoverList" OnClick="() => _opened = false">@customer.Names[0]</MatNavItem>
+                    }
+                </MatNavMenu>
+            </MatDrawer>
+            <MatDrawerContent>
                 @Body
-            </div>
-        </div>
-    </div>
+            </MatDrawerContent>
+        </MatDrawerContainer>
+        
+    </MatAppBarContent>
+</MatAppBarContainer>
+<style>
+    .hoverList:hover {
+        background-color: lightgray;
+    }
+</style>
 
+@code {
+
+    bool _opened = true;
+ 
+    void ButtonClicked()
+    {
+        _opened = !_opened;
+    }
+
+}
