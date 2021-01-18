@@ -1,40 +1,57 @@
 ﻿@using ikl.web.Shared
 @inherits LayoutComponentBase
-@inject DataService DataService
 
-<MatAppBarContainer>
+<style>
+    .mdc-top-app-bar {
+        background-color: #d0d0d0 !important;
+    }
+    header a:hover {
+        text-decoration: none;
+    }
+   @@media screen and (min-width: 600px){
+         .mdc-drawer {
+             transition-property: none !important;
+         }
+    }
+</style>
+<MatAppBarContainer Style="display: flex; flex-direction: column; height: 100%;">
     <MatAppBar Fixed="true">
         <MatAppBarRow>
             <MatAppBarSection>
-                <MatIconButton Icon="menu" OnClick="ButtonClicked" ></MatIconButton>
+                <a href="/" style="margin-left: 10px;"><img src="./icon-192.png" style="height: 48px" alt="" /> <img src="./ib_kofod-larsen_maa_sig_sm.png" style="height: 32px" alt="" /></a>
             </MatAppBarSection>
             <MatAppBarSection>
-                <MatIconButton Icon="home" Link="/"></MatIconButton>
-                <MatIconButton Icon="search" Link="/search"></MatIconButton>
-                <MatAppBarTitle>IB KOFOD LARSEN</MatAppBarTitle>
+                @* <MatIconButton Icon="search" Link="/search"></MatIconButton> *@
+                @* <MatAppBarTitle Style="width: 100%"><</MatAppBarTitle> *@
             </MatAppBarSection>
             <MatAppBarSection Align="@MatAppBarSectionAlign.End">
-                <MatIconButton Icon="info"></MatIconButton>
+                <MatHidden Breakpoint="@MatBreakpoint.MD" Direction="@MatHiddenDirection.Up">
+                    <MatIconButton Icon="menu" OnClick="ButtonClicked"></MatIconButton>
+                </MatHidden>
             </MatAppBarSection>
         </MatAppBarRow>
     </MatAppBar>
  
-    <MatAppBarContent>
-        <MatDrawerContainer Style="width: 100vw; height: 100vh;">
-            <MatDrawer @bind-Opened="@_opened">
-                <MatNavMenu>
-                    @foreach (var customer in DataService.GetCustomers())
-                    {
-                        var drawings = DataService.GetDrawings(customer.Id);
-                        // if no drawings, dont add nav item
-                        if (!drawings.Any()) continue;
-                        var link = "drawings?customerId=" + customer.Id;
-
-                        <MatNavItem Href="@link" Class="hoverList" OnClick="() => _opened = false">@customer.Names[0]</MatNavItem>
-                    }
-                </MatNavMenu>
-            </MatDrawer>
-            <MatDrawerContent>
+    <MatAppBarContent Style="flex-grow: 1; ">
+        <MatDrawerContainer DrawerWidth="300px" Style="width: 100%; flex-grow: 1; display: flex; height: 100%;">
+            <MatHidden Breakpoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Up">
+                <ChildContent>
+                    <MatDrawer @bind-Opened="@_opened" Mode="@MatDrawerMode.Modal" Style="background-color:  #f1f1f1; width: 300px">
+                        <MatNavMenu>
+                            <FilterMenu></FilterMenu>
+                        </MatNavMenu>
+                    </MatDrawer>
+                </ChildContent>
+             
+                <ElseContent>
+                    <MatDrawer @bind-Opened="@_openedDesktop" Mode="@MatDrawerMode.Dismissible" Style="background-color:  #f1f1f1; width: 300px">
+                        <MatNavMenu>
+                            <FilterMenu></FilterMenu>
+                        </MatNavMenu>
+                    </MatDrawer>
+                </ElseContent>
+            </MatHidden>
+            <MatDrawerContent Style="overflow-y: scroll;">
                 @Body
             </MatDrawerContent>
         </MatDrawerContainer>
@@ -49,7 +66,8 @@
 
 @code {
 
-    bool _opened = true;
+    bool _opened = false;
+    bool _openedDesktop = true;
  
     void ButtonClicked()
     {
