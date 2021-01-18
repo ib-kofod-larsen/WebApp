@@ -1,3 +1,4 @@
+using System;
 using ikl.web.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +38,38 @@ namespace ikl.web.Server
             foreach (var item in customers)
             {
                 item.Year += 1900;
+            }
+
+            foreach (var drawing in drawings)
+            {
+                var customer = customers.First(c => c.Id == drawing.CustomerId);
+                drawing.Tags.Add(customer.Names[0]);
+                drawing.Tags.Add(customer.Year.ToString());
+                drawing.Tags.Add(drawing.Date.Year.ToString());
+                foreach (var ratio in drawing.Ratios)
+                {
+                    drawing.Tags.Add(ratio);
+                }
+                if (drawing.Title.Contains("chair", StringComparison.InvariantCultureIgnoreCase) ||
+                    drawing.Title.Contains("stol", StringComparison.InvariantCultureIgnoreCase) || 
+                    drawing.Title.Contains("Hocker", StringComparison.InvariantCultureIgnoreCase) ||
+                    drawing.Title.Contains("Sessel", StringComparison.InvariantCultureIgnoreCase) ||
+                    drawing.Title.Contains("stuhl", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    drawing.Tags.Add("stol");
+                    drawing.Tags.Add("chair");
+                }
+
+                if (drawing.Title.Contains("tisch", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    drawing.Tags.Add("bord");
+                    drawing.Tags.Add("table");
+                }
+                
+                if (drawing.Title.Contains("gestell", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    drawing.Tags.Add("ramme");
+                }
             }
             services.AddSingleton(sp => new Data(drawings, customers));
         }
