@@ -33,17 +33,15 @@ namespace ikl.web.Client.Shared
         
         public List<Drawing> SearchDrawings(string text)
         {
-            var input = text.Split(' ');
+            var input = text.ToLower().Split(' ');
             return _data
                 .Drawings
                 .Where(d => Match(d, input)).ToList();
         }
 
         
-        private bool Match(Drawing d, string[] search)
+        private static bool Match(Drawing d, string[] search)
         {
-            var customer = GetCustomer(d.CustomerId);
-            
             var results = search
                 .Select(s => s.ToLower())
                 .ToDictionary(s => s, s => false);
@@ -53,7 +51,7 @@ namespace ikl.web.Client.Shared
 
             foreach (var s in search)
             {
-                if (searchableValues.Any(value => value.Contains(s.ToLower())))
+                if (searchableValues.Any(value => value.Contains(s)))
                 {
                     results[s] = true;
                 }

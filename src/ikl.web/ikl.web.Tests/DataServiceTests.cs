@@ -30,5 +30,31 @@ namespace ikl.web.Tests
             // ASSERT
             Assert.That(result, Is.Not.Empty);
         }
+        
+        [Test]
+        public void Search_IgnoreCase_ReturnsValues()
+        {
+            // ARRANGE
+            var text = "Stol";
+            
+            // ACT
+            var result = _dataService.SearchDrawings(text);
+            
+            // ASSERT
+            Assert.That(result, Is.Not.Empty);
+        }
+        
+        [Test]
+        public void Search_CustomerName_ReturnsValues()
+        {
+            // ARRANGE
+            var text = "SELIG";
+            
+            // ACT
+            var result = _dataService.SearchDrawings(text);
+            
+            // ASSERT
+            Assert.That(result, Is.Not.Empty);
+        }
     }
 }
