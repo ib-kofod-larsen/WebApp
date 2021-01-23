@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@inject IMatDialogService MatDialogService
+@inject NavigationManager NavigationManager
+ 
+<MatDialogTitle style="display: flex; align-items: center;">
+    <div style="flex: 1;">Search</div>
+    <div @onclick="CloseDialog" style="cursor: pointer;">
+        <MatIcon Icon="@MatIconNames.Close"></MatIcon>
+    </div>
+</MatDialogTitle>
+<MatDialogContent>
+    <div>
+        <MatTextField Label="search input" @bind-Value="@_searchText" OnKeyUp="OnKeyUp"></MatTextField>
+    </div>
+    <div>
+        <MatButton OnClick="Search" Raised="true">Search</MatButton>
+    </div>
+</MatDialogContent>
+<MatDialogActions>
+    <MatButton OnClick="CloseDialog">Close</MatButton>
+</MatDialogActions>
+ 
+@code
+{
+    private string _searchText;
+
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var q = QueryHelpers.ParseQuery(uri.Query);
+        if (q.TryGetValue("q", out var text))
+        {
+            _searchText = text;
+        }
+    }
+
+    [CascadingParameter]
+    public MatDialogReference DialogReference { get; set; }
+    Task CloseDialog()
+    {
+        DialogReference.Close(null);
+        return Task.CompletedTask;
+    }
+
+    Task Search()
+    {
+        var link = "search?q=" + _searchText;
+        NavigationManager.NavigateTo(link);
+        DialogReference.Close(null);
+        return Task.CompletedTask;
+    }
+
+    private void OnKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter")
+        {
+            Search();
+        }
+    }
+}

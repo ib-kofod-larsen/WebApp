@@ -1,17 +1,16 @@
 ﻿@using ikl.web.Shared
 @inject DataService DataService
 @inject IJSRuntime JsRuntime
+@inject IMatDialogService MatDialogService
 
-<MatCard class="mat-card">
-    <MatCardContent Style="border: 2px solid black; border-radius: 4px; padding: .5rem;">
+<MatCard class="mat-card" >
+
+    <MatCardContent Style="border: 2px solid black; border-radius: 4px; padding: .5rem;" 
+            @onclick="() => ShowImage(_drawingId, Drawing.Title)">
         <MatCardMedia
             Wide="true"
-            @onclick="() => ShowOverlay(_drawingId, Drawing.Title)"
             ImageUrl="@("https://ibkofodlarsen.blob.core.windows.net/thumbnails/" + Drawing.Path)"/>
-        <div id="modal-@_drawingId" class="modal" @onclick="() => CloseOverlay(_drawingId)">
-            <img class="modal-content" id="img-modal-@_drawingId" alt="image">
-            <div id="caption-@_drawingId" class="caption"></div>
-        </div>
+        
         <div class="mat-card-content">
             <MatHeadline6 class="mat-card-clean-margin">
                 @Drawing.Title
@@ -44,6 +43,15 @@
     
     
 }
+    /* Style the Image Used to Trigger the Modal */
+    .click-able-image {
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .hover-image:hover {opacity: 0.7;}
+
 .mat-card {
     max-width: 400px;
 }
@@ -55,70 +63,10 @@
 .mat-card-clean-margin {
     margin: 0px;
 }
-/* Style the Image Used to Trigger the Modal */
-.click-able-image {
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;  
-}
-
-.hover-image:hover {opacity: 0.7;}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
-}
-
-/* Modal Content (Image) */
-.modal-content {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-}
-
-/* Caption of Modal Image (Image Text) - Same Width as the Image */
-.caption {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-  text-align: center;
-  color: #ccc;
-  padding: 10px 0;
-  height: 150px;
-}
-
-/* Add Animation - Zoom in the Modal */
-.modal-content, .caption {
-  animation-name: zoom;
-  animation-duration: 0.6s;
-}
 
 @@keyframes zoom {
   from {transform:scale(0)}
   to {transform:scale(1)}
-}
-
-/* The Close Button */
-.close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
 }
 
 .close:hover,
@@ -144,13 +92,21 @@
         }
         return base.SetParametersAsync(parameters);
     }
+    async Task ShowImage(string drawingId, string title)
+    {
+        await MatDialogService.OpenAsync(typeof(ShowImageDialog), new MatDialogOptions()
+        {
+            Attributes = new Dictionary<string, object>()
+            {
+                {"DrawingId", drawingId},
+                { "Title", title}
+            },
+            SurfaceStyle = "min-width: 1024px;"
+        });
+    }
+
     private void ShowOverlay(string drawingId, string caption)
     {
         ((IJSInProcessRuntime) JsRuntime).Invoke<string>("showModal", drawingId, caption);
-    }
-
-    private void CloseOverlay(string drawingId)
-    {
-        ((IJSInProcessRuntime) JsRuntime).Invoke<string>("closeModal", drawingId);
     }
 }

@@ -30,47 +30,8 @@ namespace ikl.web.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-            var drawingsJson = File.ReadAllText("drawings.json");
-            var drawings = JsonSerializer.Deserialize<Drawing[]>(drawingsJson);
-
-            var customersJson = File.ReadAllText("customers.json");
-            var customers = JsonSerializer.Deserialize<Customer[]>(customersJson);
-            foreach (var item in customers)
-            {
-                item.Year += 1900;
-            }
-
-            foreach (var drawing in drawings)
-            {
-                foreach (var ratio in drawing.Ratios)
-                {
-                    drawing.Tags.Add(ratio);
-                }
-                if (drawing.Title.Contains("chair", StringComparison.InvariantCultureIgnoreCase) ||
-                    drawing.Title.Contains("stol", StringComparison.InvariantCultureIgnoreCase) || 
-                    drawing.Title.Contains("Hocker", StringComparison.InvariantCultureIgnoreCase) ||
-                    drawing.Title.Contains("Sessel", StringComparison.InvariantCultureIgnoreCase) ||
-                    drawing.Title.Contains("stuhl", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    drawing.Tags.Add("stol");
-                    drawing.Tags.Add("chair");
-                }
-
-                if (drawing.Title.Contains("tisch", StringComparison.InvariantCultureIgnoreCase) ||
-                    drawing.Title.Contains("bord", StringComparison.InvariantCultureIgnoreCase) ||
-                    drawing.Title.Contains("table", StringComparison.InvariantCultureIgnoreCase)
-                    )
-                {
-                    drawing.Tags.Add("bord");
-                    drawing.Tags.Add("table");
-                }
-                
-                if (drawing.Title.Contains("gestell", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    drawing.Tags.Add("ramme");
-                }
-            }
-            services.AddSingleton(sp => new Data(drawings, customers));
+            
+            services.AddSingleton(DataLoader.Load());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

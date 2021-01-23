@@ -1,8 +1,9 @@
 @page "/drawings"
 @using ikl.web.Shared
+@using Microsoft.AspNetCore.WebUtilities
 @inject DataService DataService
 @inject NavigationManager NavManager
-
+@implements IDisposable
 @if (Customer != null)
 {
     <MatH2>@Customer.Names[0]</MatH2>
@@ -16,19 +17,13 @@
 
 <style>
 .cards {
- 
+ width: 100%;
 display: grid;
- 
 grid-template-columns: repeat(3, 1fr);
- 
 grid-auto-rows: auto;
- 
 grid-gap: 1rem;
  
 }
-
-
-
 </style>
 
     @code{
@@ -47,23 +42,25 @@ grid-gap: 1rem;
         
         private void NavManagerOnLocationChanged(object sender, LocationChangedEventArgs e)
         {
-            Update(e.Location);
+            var uri = NavManager.ToAbsoluteUri(e.Location);
+            Update(uri.Query);
         }
 
         private void Update(string query)
         {
-            var querySplit = query.Split("=");
+            var q = QueryHelpers.ParseQuery(query);
             
-            if (query.Contains("customerId"))
+            if (q.TryGetValue("customerId", out var customerId))
             {
-                var customerId = querySplit.Last();
                 Customer = DataService.GetCustomer(customerId);
                 _drawings = DataService.GetDrawings(customerId);
-            } else if (query.Contains("text"))
-            {
-                var text = querySplit.Last();
-                _drawings = DataService.SearchDrawings(text);
-            }   
+            }
             StateHasChanged();
         }
+
+        public void Dispose()
+        {
+            NavManager.LocationChanged -= NavManagerOnLocationChanged;
+        }
+
     }

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ikl.web.Client", "Client\ik
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ikl.web.Shared", "Shared\ikl.web.Shared.csproj", "{F74CFBAA-A73E-41D6-BD47-44341894D37B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ikl.web.Tests", "ikl.web.Tests\ikl.web.Tests.csproj", "{0247547E-DD83-402A-9D5D-167BAC856C16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F74CFBAA-A73E-41D6-BD47-44341894D37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F74CFBAA-A73E-41D6-BD47-44341894D37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F74CFBAA-A73E-41D6-BD47-44341894D37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0247547E-DD83-402A-9D5D-167BAC856C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0247547E-DD83-402A-9D5D-167BAC856C16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0247547E-DD83-402A-9D5D-167BAC856C16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0247547E-DD83-402A-9D5D-167BAC856C16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

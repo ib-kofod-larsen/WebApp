@@ -8,6 +8,7 @@ namespace ikl.web.Shared
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }
+        
         [JsonPropertyName("customerId")]
         public string CustomerId { get; set; }
         [JsonPropertyName("date")]
@@ -22,5 +23,21 @@ namespace ikl.web.Shared
         public string Path { get; set; }
         [JsonPropertyName("description")]
         public string Description { get; set; }
+
+        public IEnumerable<string> GetSearchableValues()
+        {
+            yield return Description;
+            yield return Path;
+            yield return Title;
+            foreach (var tag in Tags)
+            {
+                yield return tag;
+            }
+
+            foreach (var ratio in Ratios)
+            {
+                yield return ratio;
+            }
+        }
     }
 }

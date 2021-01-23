@@ -1,78 +1,73 @@
-﻿@page "/search"
+﻿@page "/Search"
+@using Microsoft.AspNetCore.WebUtilities
 @using ikl.web.Shared
-
 @inject DataService DataService
-<MatAutocompleteList 
-    Items="@_customerOptions" 
-    TItem="string" Label="Customers" 
-    ValueChanged="CustomerChanged"/>
+@inject NavigationManager NavManager
+@implements IDisposable
 
-<MatAutocompleteList 
-    Items="@DataService.Tags" 
-    TItem="string" Label="search options" 
-    ValueChanged="TagSearchChanged"/>
-
+<h3>@("Found: " + _drawings.Count + " items for '" + _text + "'")</h3>
+<MatPaginator Length="@_drawings.Count" PageSize="@pageSize" Page="@OnPage"></MatPaginator>
 <div class="cards">
-    @foreach (var drawing in _drawings)
+    @foreach (var drawing in _page)
     {
         <DrawingCard Drawing="drawing"/>
     }
 </div>
 
-
 <style>
 .cards {
- 
+ width: 100%;
 display: grid;
- 
 grid-template-columns: repeat(3, 1fr);
- 
 grid-auto-rows: auto;
- 
 grid-gap: 1rem;
- 
 }
-
-
-
 </style>
+
 @code {
-    private string[] _customerOptions = new string[0];
-    private Drawing[] _drawings = new Drawing[0];
-    private string _tag;
-    private Customer _customer;
-    protected override void OnInitialized()
+
+    int pageSize = 10;
+    string _text;
+    private List<Drawing> _page = new List<Drawing>();
+    private List<Drawing> _drawings = new List<Drawing>();
+    protected override async Task OnInitializedAsync()
     {
-        _customerOptions = DataService.GetCustomers().Select(c => c.Names[0]).ToArray();
-        SetDrawings();
-        base.OnInitialized();
+        await base.OnInitializedAsync();
+        
+        NavManager.LocationChanged += NavManagerOnLocationChanged;
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        Load(uri);
     }
 
-    private void CustomerChanged(string customerName)
+    private void NavManagerOnLocationChanged(object sender, LocationChangedEventArgs e)
     {
-        _customer = DataService.GetCustomers().First(c => Equals(customerName, c.Names[0]));
-       
+        var uri = NavManager.ToAbsoluteUri(e.Location);
+         Load(uri);
     }
 
-    private void TagSearchChanged(string tag)
+    private void Load(Uri uri)
     {
-        _tag = tag;
-        SetDrawings();
-    }
-
-    private void SetDrawings()
-    {
-        IEnumerable<Drawing> drawings = Enumerable.Empty<Drawing>();
-        if (_customer == null)
+        var q = QueryHelpers.ParseQuery(uri.Query);
+        if (!q.TryGetValue("q", out var text))
         {
-            _drawings = DataService.GetDrawings().Take(10).ToArray();
             return;
         }
-        drawings = DataService.GetDrawings(_customer.Id);
-        if (string.IsNullOrEmpty(_tag))
-        {
-            _drawings = drawings.Where(d => d.Tags.Contains(_tag)).ToArray();
-        }
-        _drawings = drawings.ToArray();
+        _text = text;
+        _drawings = DataService.SearchDrawings(_text);
+        _page = _drawings.Take(pageSize).ToList();
+        StateHasChanged();
     }
+    
+    private void OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        _page = _drawings.Skip(e.PageSize * e.PageIndex).Take(e.PageSize).ToList();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= NavManagerOnLocationChanged;
+    }
+
 }

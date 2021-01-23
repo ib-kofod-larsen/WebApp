@@ -1,0 +1,76 @@
+﻿@using ikl.web.Shared
+@inject IMatDialogService MatDialogService
+ 
+ 
+<MatDialogTitle style="display: flex; align-items: center;">
+    <div style="flex: 1;">@Title</div>
+    <div @onclick="@(_=>CloseDialog())" style="cursor: pointer;">
+        <MatIcon Icon="@MatIconNames.Close"></MatIcon>
+    </div>
+</MatDialogTitle>
+<MatDialogContent>
+    <img src="@DrawingUrl" alt="image">
+
+</MatDialogContent>
+<MatDialogActions>
+    <MatButton OnClick="CloseDialog">Close</MatButton>
+    @* <MatButton OnClick="ToggleDrawingUrl">@_label</MatButton> *@
+</MatDialogActions>
+<style>
+       /* Modal Content (Image) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+</style>
+@code
+{
+    [Parameter]
+    public string Title { get; set; }
+
+    private string _drawingId;
+    [Parameter]
+    public string DrawingId
+    {
+        get => _drawingId;
+        set
+        {
+            _drawingId = value;
+            Large = "https://ibkofodlarsen.blob.core.windows.net/thumbnalis-large/" + DrawingId + ".jpg";
+            XLarge = "https://ibkofodlarsen.blob.core.windows.net/thumbnails-xlarge/" + DrawingId + ".jpg";
+            DrawingUrl = XLarge;
+        }
+    }
+
+    private string DrawingUrl { get; set; }
+    private string Large { get; set; }
+    private string XLarge { get; set; }
+    
+    // private string _label = "Enlarge size";
+    
+    [CascadingParameter]
+    public MatDialogReference DialogReference { get; set; }
+
+    Task CloseDialog()
+    {
+        DialogReference.Close(null);
+        return Task.CompletedTask;
+    }
+
+    // private void ToggleDrawingUrl()
+    // {
+    //     if (DrawingUrl == Large)
+    //     {
+    //         DrawingUrl = XLarge;
+    //         _label = "Decrease size";
+    //     }
+    //     else
+    //     {
+    //         DrawingUrl = Large;
+    //         _label = "Enlarge size";
+    //     }
+    // }
+}

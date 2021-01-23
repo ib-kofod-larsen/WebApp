@@ -5,9 +5,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using ikl.web.Client.Shared;
+using ikl.web.Shared;
 using MatBlazor;
 
 namespace ikl.web.Client
@@ -20,13 +22,17 @@ namespace ikl.web.Client
             builder.RootComponents.Add<App>("#app");
             builder.Services.AddMatBlazor();
             
-            builder.Services.AddSingleton(sp => new HttpClient
-                {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
+            var httpClient = new HttpClient
+                {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
+            
+            var data = await httpClient.GetFromJsonAsync<Data>("data");
+            builder.Services.AddSingleton(httpClient);
+            if (data != null)
+            {
+                builder.Services.AddSingleton(data);
+            }
             builder.Services.AddSingleton<DataService>();
             var host = builder.Build();
-
-            var dataService = host.Services.GetService<DataService>();
-            await dataService.Initialize();
             await host.RunAsync();
         }
     }
