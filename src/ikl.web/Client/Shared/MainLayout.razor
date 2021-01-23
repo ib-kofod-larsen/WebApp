@@ -33,7 +33,7 @@
         </MatAppBarRow>
     </MatAppBar>
  
-    <MatAppBarContent Style="flex-grow: 1; ">
+    <MatAppBarContent Style="flex-grow: 1;">
         <MatDrawerContainer DrawerWidth="300px" Style="width: 100%; flex-grow: 1; display: flex; height: 100%;">
             <MatHidden Breakpoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Up">
                 <ChildContent>
@@ -45,14 +45,14 @@
                 </ChildContent>
              
                 <ElseContent>
-                    <MatDrawer @bind-Opened="@_openedDesktop" Mode="@MatDrawerMode.Dismissible" Style="background-color:  #f1f1f1; width: 300px">
+                    <MatDrawer @bind-Opened="@_openedDesktop" Mode="@MatDrawerMode.Dismissible" Style="background-color:  #f1f1f1;">
                         <MatNavMenu>
                             <FilterMenu></FilterMenu>
                         </MatNavMenu>
                     </MatDrawer>
                 </ElseContent>
             </MatHidden>
-            <MatDrawerContent Style="overflow-y: scroll;">
+            <MatDrawerContent Style="overflow-y: scroll; width: 100%">
                 @Body
             </MatDrawerContent>
         </MatDrawerContainer>
