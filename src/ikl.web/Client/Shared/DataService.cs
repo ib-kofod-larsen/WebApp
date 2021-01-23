@@ -53,7 +53,7 @@ namespace ikl.web.Client.Shared
 
             foreach (var s in search)
             {
-                if (searchableValues.Any(value => value.Contains(s)))
+                if (searchableValues.Any(value => value.Contains(s.ToLower())))
                 {
                     results[s] = true;
                 }
