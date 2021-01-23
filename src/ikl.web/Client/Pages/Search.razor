@@ -5,7 +5,7 @@
 @inject NavigationManager NavManager
 @implements IDisposable
 
-<h3>@("Found: " + _drawings.Count + " items for '" + _text + "'")</h3>
+<h3>@("Found: " + _drawings.Count + " drawings for '" + _text + "'")</h3>
 <MatPaginator Length="@_drawings.Count" PageSize="@pageSize" Page="@OnPage"></MatPaginator>
 <div class="cards">
     @foreach (var drawing in _page)
@@ -18,7 +18,7 @@
 .cards {
  width: 100%;
 display: grid;
-grid-template-columns: repeat(3, 1fr);
+grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 grid-auto-rows: auto;
 grid-gap: 1rem;
 }

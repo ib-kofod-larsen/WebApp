@@ -22,8 +22,8 @@
                 <a href="/" style="margin-left: 10px;"><img src="./icon-192.png" style="height: 48px" alt="" /> <img src="./ib_kofod-larsen_maa_sig_sm.png" style="height: 32px" alt="" /></a>
             </MatAppBarSection>
             <MatAppBarSection>
-                <MatButton Icon="search" OnClick="() => MatDialogService.OpenAsync(typeof(SearchDialog), null)" Label="Search"></MatButton>
-                @* <MatIconButton Icon="search" OnClick="() => MatDialogService.OpenAsync(typeof(SearchDialog), null)"></MatIconButton> *@
+                @* <MatButton Icon="search" OnClick="() => MatDialogService.OpenAsync(typeof(SearchDialog), null)" Label="Search"></MatButton> *@
+                <MatIconButton Icon="search" OnClick="() => MatDialogService.OpenAsync(typeof(SearchDialog), null)"></MatIconButton>
             </MatAppBarSection>
             <MatAppBarSection Align="@MatAppBarSectionAlign.End">
                 <MatHidden Breakpoint="@MatBreakpoint.MD" Direction="@MatHiddenDirection.Up">
