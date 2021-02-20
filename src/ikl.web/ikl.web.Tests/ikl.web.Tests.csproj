@@ -17,4 +17,13 @@
       <ProjectReference Include="..\Shared\ikl.web.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="test_exclude_list.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="test_include_list.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

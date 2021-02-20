@@ -22,13 +22,30 @@ namespace ikl.web.Server
             "4a91e9ff4023408483941404cc9cf39b", // Megiddo
             "4fb495d629b748ce8eaee5587873b22b", // Hus Østergaard
         };
-        public static Data Load(string drawingPath = "drawings.json", string customerPath = "customers.json")
+        public static Data Load(string drawingPath = "drawings.json", string customerPath = "customers.json", string excludeListPath = "exclude_list.json", string includeListPath = "include_list.json")
         {
+            HashSet<string> excludes = new HashSet<string>();
+            HashSet<string> includes = new HashSet<string>();
+            if (!string.IsNullOrEmpty(excludeListPath))
+            {
+                var excludeListJson = File.ReadAllText(excludeListPath);
+                excludes = JsonSerializer.Deserialize<HashSet<string>>(excludeListJson);
+            }
+
+            if (!string.IsNullOrEmpty(includeListPath))
+            {
+                var includeListJson = File.ReadAllText(includeListPath);
+                includes = JsonSerializer.Deserialize<HashSet<string>>(includeListJson);
+            }
+            
+            
             var drawingsJson = File.ReadAllText(drawingPath);
             var drawings = JsonSerializer
                 .Deserialize<Drawing[]>(drawingsJson)?
                 .Where(d => !(d.Ratios.Length == 1 && d.Ratios[0] == "1:1"))
                 .Where(d => !ExcludeList.Contains(d.CustomerId))
+                .Where(d => !ShouldBeExcluded(d, excludes))
+                .Where(d => ShouldBeIncluded(d, includes))
                 .ToArray() ?? Array.Empty<Drawing>();
 
             var customersJson = File.ReadAllText(customerPath);
@@ -91,6 +108,22 @@ namespace ikl.web.Server
 
             var data = new Data(drawings, customers);
             return data;
+        }
+
+        private static bool ShouldBeExcluded(Drawing drawing, HashSet<string> excludes)
+        {
+            var id = drawing.Path.Substring(0, drawing.Path.Length - 4); // (".jpg").Length == 4
+            var result = excludes.Contains(id);
+            return result;
+        }
+        private static bool ShouldBeIncluded(Drawing drawing, HashSet<string> includes)
+        {
+            if (!includes.Any())
+            {
+                return true;
+            }
+            var id = drawing.Path.Substring(0, drawing.Path.Length - 4); // (".jpg").Length == 4
+            return includes.Contains(id);
         }
     }
 }
