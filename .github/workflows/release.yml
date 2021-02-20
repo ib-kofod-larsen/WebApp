@@ -38,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: $GITHUB_RUN_NUMBER
-          release_name: Release $GITHUB_RUN_NUMBER
+          tag_name: ${{ GITHUB_RUN_NUMBER }}
+          release_name: Release ${{ GITHUB_RUN_NUMBER }}
           draft: false
           prerelease: false
 
@@ -76,6 +76,6 @@ jobs:
       - name: Deploy
         uses: azure/webapps-deploy@v2
         with:
-          app-name: brandarmies-v2 # Replace with your app name
+          app-name: ibkofodlarsen
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
           package: ./publish
